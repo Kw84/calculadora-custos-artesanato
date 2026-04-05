@@ -1,0 +1,5 @@
+{
+  "name": "Calculadora de Preços Artesanais",
+  "description": "Uma ferramenta para ajudar produtores artesanais a calcular o custo de produção e o preço de venda de seus produtos, como doce de leite.",
+  "requestFramePermissions": []
+}
