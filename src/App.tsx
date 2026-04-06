@@ -1,9 +1,3 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- * Trigger deployment after GitHub Actions permission fix
- */
-
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { 
   Plus, 
@@ -23,15 +17,11 @@ import {
   Instagram,
   QrCode,
   Check,
-  MessageSquare,
-  Briefcase,
-  Mail,
-  Bug,
-  User
+  Briefcase
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
-// --- Types ---
+// --- Modelos de Dados ---
 
 interface Ingredient {
   id: string;
@@ -49,7 +39,7 @@ interface Packaging {
   quantity: number;
 }
 
-// --- Security & Validation Helpers ---
+// --- Validadores e Sanitização ---
 
 const MAX_TEXT_LENGTH = 50;
 const MAX_NUMBER_VALUE = 9999999;
@@ -101,7 +91,7 @@ const validateImportedData = (data: any): boolean => {
   }
 };
 
-// --- Helper Components ---
+// --- Componentes Auxiliares ---
 
 const Card = ({ children, title, icon: Icon, className = "", delay = 0 }: { children: React.ReactNode, title: string, icon: any, className?: string, delay?: number }) => (
   <motion.div 
@@ -109,7 +99,7 @@ const Card = ({ children, title, icon: Icon, className = "", delay = 0 }: { chil
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
     transition={{ duration: 0.5, delay }}
-    className={`bg-white rounded-3xl studio-shadow border border-slate-100 overflow-hidden ${className}`}
+    className={`bg-white rounded-3xl card-shadow border border-slate-100 overflow-hidden ${className}`}
   >
     <div className="px-8 py-6 border-b border-slate-50 flex items-center justify-between">
       <div className="flex items-center gap-4">
@@ -158,10 +148,10 @@ const InputGroup = ({ label, value, onChange, type = "number", suffix = "", pref
   </div>
 );
 
-// --- Main App ---
+// --- Aplicação Principal ---
 
 export default function App() {
-  // State
+  // Estado da Aplicação
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [packaging, setPackaging] = useState<Packaging[]>([]);
   const [labor, setLabor] = useState({ hourlyRate: 0, hoursSpent: 0 });
@@ -173,7 +163,7 @@ export default function App() {
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [showPixCopySuccess, setShowPixCopySuccess] = useState(false);
 
-  // Load from URL on mount
+  // Carregar dados via URL ao iniciar
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const dataParam = params.get('data');
@@ -206,7 +196,7 @@ export default function App() {
     }
   }, []);
 
-  // Generate Share Link
+  // Gerar link de compartilhamento
   const handleGenerateLink = () => {
     const data = { ingredients, packaging, labor, indirectRate, markup, yieldQuantity, otherCosts };
     const jsonStr = JSON.stringify(data);
@@ -250,7 +240,7 @@ export default function App() {
     }
   };
 
-  // Calculations
+  // Cálculos de Custos e Preços
   const ingredientsTotal = useMemo(() => 
     ingredients.reduce((acc, item) => acc + (item.totalPrice / (item.totalQuantity || 1)) * item.usedQuantity, 0)
   , [ingredients]);
@@ -275,7 +265,7 @@ export default function App() {
     unitCost * (1 + markup / 100)
   , [unitCost, markup]);
 
-  // Actions
+  // Ações de Manipulação de Dados
   const addIngredient = () => {
     setIngredients([...ingredients, { 
       id: crypto.randomUUID(), 
@@ -352,18 +342,18 @@ export default function App() {
         <motion.div 
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-slate-50 rounded-3xl p-6 flex items-center gap-5 text-slate-900 border border-slate-100 studio-shadow relative overflow-hidden group"
+          className="bg-slate-50 rounded-3xl p-6 flex items-center gap-5 text-slate-900 border border-slate-100 card-shadow relative overflow-hidden group"
         >
           <div className="absolute top-0 right-0 p-4 text-slate-200 group-hover:scale-110 transition-transform duration-700">
-            <Bug size={100} />
+            <Info size={100} />
           </div>
           <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center shrink-0 border border-slate-200">
-            <Bug size={20} className="text-brand-primary" />
+            <Info size={20} className="text-brand-primary" />
           </div>
           <div className="relative z-10">
-            <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Aviso de Desenvolvimento</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Nota de Versão</p>
             <p className="text-sm text-slate-600 leading-relaxed max-w-2xl">
-              Esta é uma versão <strong>Beta</strong>. Os cálculos são precisos, mas a interface está em constante evolução. Se encontrar algo estranho, me avise!
+              Esta é uma versão <strong>Beta</strong> otimizada para precisão nos cálculos. A interface está sendo aprimorada para oferecer a melhor experiência possível.
             </p>
           </div>
         </motion.div>
@@ -387,7 +377,7 @@ export default function App() {
                   </div>
                   <div>
                     <h3 className="text-xl font-display font-black tracking-tight">Link Gerado!</h3>
-                    <p className="text-sm text-slate-500">Seu projeto foi codificado e está pronto para envio.</p>
+                    <p className="text-sm text-slate-500">Seus dados de precificação foram salvos e estão prontos para compartilhar.</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 w-full md:w-auto">
@@ -456,7 +446,7 @@ export default function App() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95 }}
                       transition={{ delay: idx * 0.05 }}
-                      className="p-6 bg-slate-50/50 rounded-3xl border border-slate-100 relative group hover:bg-white hover:border-slate-200 hover:studio-shadow transition-all duration-500"
+                      className="p-6 bg-slate-50/50 rounded-3xl border border-slate-100 relative group hover:bg-white hover:border-slate-200 hover:card-shadow transition-all duration-500"
                     >
                       <div className="flex justify-between items-center mb-6">
                         <div className="flex items-center gap-3">
@@ -542,7 +532,7 @@ export default function App() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95 }}
                       transition={{ delay: idx * 0.05 }}
-                      className="p-6 bg-slate-50/50 rounded-3xl border border-slate-100 relative group hover:bg-white hover:border-slate-200 hover:studio-shadow transition-all duration-500"
+                      className="p-6 bg-slate-50/50 rounded-3xl border border-slate-100 relative group hover:bg-white hover:border-slate-200 hover:card-shadow transition-all duration-500"
                     >
                       <div className="flex justify-between items-center mb-6">
                         <div className="flex items-center gap-3">
@@ -662,7 +652,7 @@ export default function App() {
             </Card>
 
             {/* Mathematical Formulas & Transparency */}
-            <div className="p-10 bg-white rounded-[2.5rem] border border-slate-100 studio-shadow overflow-hidden relative group">
+            <div className="p-10 bg-white rounded-[2.5rem] border border-slate-100 card-shadow overflow-hidden relative group">
               <div className="absolute top-0 right-0 p-10 text-slate-50 group-hover:scale-110 transition-transform duration-700">
                 <Info size={120} />
               </div>
@@ -672,7 +662,7 @@ export default function App() {
                     <Info size={24} />
                   </div>
                   <div>
-                    <h3 className="font-display font-black text-xl text-slate-900 tracking-tight">Transparência Studio</h3>
+                    <h3 className="font-display font-black text-xl text-slate-900 tracking-tight">Transparência Total</h3>
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Fórmulas de Cálculo</p>
                   </div>
                 </div>
@@ -689,7 +679,7 @@ export default function App() {
                       { title: "Custos Fixos", formula: "Ingredientes × % Taxa", desc: "Estimativa para despesas operacionais." },
                       { title: "Preço Final", formula: "Custo Unit. × (1 + Margem)", desc: "Seu lucro aplicado sobre o custo final." }
                     ].map((f, i) => (
-                      <div key={i} className="p-6 bg-slate-50/50 rounded-3xl border border-slate-100 hover:bg-white hover:studio-shadow transition-all duration-500">
+                      <div key={i} className="p-6 bg-slate-50/50 rounded-3xl border border-slate-100 hover:bg-white hover:card-shadow transition-all duration-500">
                         <h4 className="font-black text-[10px] text-slate-400 uppercase tracking-widest mb-4">{f.title}</h4>
                         <div className="bg-slate-50 p-4 rounded-2xl font-mono text-xs text-brand-primary mb-4 border border-slate-100">
                           {f.formula}
@@ -702,7 +692,7 @@ export default function App() {
                   </div>
 
                   <div className="pt-8 border-t border-slate-100">
-                    <div className="flex items-start gap-5 p-6 bg-slate-50 rounded-3xl text-slate-900 border border-slate-200 studio-shadow">
+                    <div className="flex items-start gap-5 p-6 bg-slate-50 rounded-3xl text-slate-900 border border-slate-200 card-shadow">
                       <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shrink-0 border border-slate-100 shadow-sm">
                         <Calculator size={20} className="text-brand-primary" />
                       </div>
@@ -728,7 +718,7 @@ export default function App() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="sticky top-32"
             >
-              <div className="bg-white rounded-[2.5rem] p-10 text-slate-900 border border-slate-100 studio-shadow relative overflow-hidden">
+              <div className="bg-white rounded-[2.5rem] p-10 text-slate-900 border border-slate-100 card-shadow relative overflow-hidden">
                 <div className="absolute -top-24 -right-24 w-64 h-64 bg-brand-primary/5 rounded-full blur-3xl" />
                 <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-brand-secondary/5 rounded-full blur-3xl" />
                 
@@ -787,7 +777,7 @@ export default function App() {
               </div>
 
               {/* Quick Info Card */}
-              <div className="mt-6 p-6 bg-white rounded-3xl border border-slate-100 studio-shadow flex items-start gap-4">
+              <div className="mt-6 p-6 bg-white rounded-3xl border border-slate-100 card-shadow flex items-start gap-4">
                 <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-500 shrink-0 border border-blue-100">
                   <Info size={20} />
                 </div>
@@ -834,19 +824,19 @@ export default function App() {
               
               <div className="relative z-10 max-w-2xl mx-auto text-center">
                 <div className="flex flex-col items-center gap-4 mb-10">
-                  <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-brand-primary studio-shadow">
+                  <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-brand-primary card-shadow">
                     <QrCode size={32} />
                   </div>
                   <div>
                     <h3 className="font-display font-black text-2xl text-slate-900 tracking-tight">Apoie o Projeto</h3>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Sua doação mantém o Studio ativo</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Sua doação mantém o projeto ativo</p>
                   </div>
                 </div>
 
                 <div className="space-y-8">
                   <button 
                     onClick={copyPixKey}
-                    className="w-full p-6 bg-white rounded-3xl studio-shadow border border-slate-100 flex flex-col md:flex-row items-center gap-6 hover:-translate-y-1 transition-all active:scale-95 group/pix relative overflow-hidden"
+                    className="w-full p-6 bg-white rounded-3xl card-shadow border border-slate-100 flex flex-col md:flex-row items-center gap-6 hover:-translate-y-1 transition-all active:scale-95 group/pix relative overflow-hidden"
                   >
                     <div className="absolute inset-0 bg-emerald-500/0 group-hover/pix:bg-emerald-500/5 transition-colors" />
                     <div className="w-14 h-14 bg-[#32BCAD] rounded-full flex items-center justify-center text-white shadow-lg shadow-[#32BCAD]/20 shrink-0 relative z-10">
@@ -878,7 +868,7 @@ export default function App() {
                       href="https://www.instagram.com/kelber_weike?igsh=OTEzMDd2YTNheTc2" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-3 px-8 py-5 bg-white text-slate-900 rounded-3xl font-black text-xs uppercase tracking-widest studio-shadow hover:-translate-y-1 transition-all active:scale-95 border border-slate-100"
+                      className="flex items-center justify-center gap-3 px-8 py-5 bg-white text-slate-900 rounded-3xl font-black text-xs uppercase tracking-widest card-shadow hover:-translate-y-1 transition-all active:scale-95 border border-slate-100"
                     >
                       <Instagram size={20} className="text-pink-500" />
                       Instagram

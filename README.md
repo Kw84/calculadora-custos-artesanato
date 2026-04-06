@@ -1,20 +1,31 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Calculadora de Precificação Artesanal
 
-# Run and deploy your AI Studio app
+Uma ferramenta profissional desenvolvida para ajudar artesãos e pequenos produtores a calcular o custo real de seus produtos e definir preços de venda estratégicos.
 
-This contains everything you need to run your app locally.
+## Funcionalidades
 
-View your app in AI Studio: https://ai.studio/apps/152594de-a2ef-4193-9fa3-e4c759707bae
+- **Cálculo de Ingredientes:** Calcule o custo proporcional de cada componente baseado no preço de compra e quantidade utilizada.
+- **Gestão de Embalagens:** Adicione custos de embalagem por unidade.
+- **Mão de Obra:** Defina seu valor hora e o tempo gasto na produção.
+- **Custos Indiretos:** Adicione uma porcentagem para cobrir gastos como luz, água e gás.
+- **Margem de Lucro (Markup):** Aplique sua margem desejada para ver o preço sugerido.
+- **Compartilhamento Inteligente:** Salve e compartilhe seus cálculos através de links codificados.
 
-## Run Locally
+## Tecnologias Utilizadas
 
-**Prerequisites:**  Node.js
+- **React 19**
+- **Vite**
+- **Tailwind CSS 4**
+- **Motion** (Animações)
+- **Lucide React** (Ícones)
 
+## Como Usar
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+1. Adicione os ingredientes e materiais utilizados.
+2. Informe os custos de embalagem.
+3. Defina seu valor hora e tempo de produção.
+4. Ajuste a margem de lucro desejada.
+5. Clique em "Compartilhar" para gerar um link com todos os seus dados salvos.
+
+---
+Desenvolvido com foco em simplicidade e precisão para o empreendedor artesanal.
