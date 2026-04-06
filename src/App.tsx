@@ -338,10 +338,10 @@ export default function App() {
 
             <button 
               onClick={handleGenerateLink}
-              className="flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-2xl text-sm font-bold hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/10 active:scale-95"
+              className="hidden lg:flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-2xl text-sm font-bold hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/10 active:scale-95"
             >
               <Share2 size={18} />
-              <span className="hidden sm:inline">Compartilhar</span>
+              <span>Compartilhar</span>
             </button>
           </div>
         </div>
