@@ -227,6 +227,8 @@ export default function App() {
         const encodedUrl = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J3dWdPMkt1OVZiWGRMUVZReEhmVldaUFFIQUpvYzBNS3hmbVdOSFh4azB4UUJCZkx4TEtweTFXWk0yNi1GNXlWLS9leGVj';
         const GOOGLE_SCRIPT_URL = atob(encodedUrl);
         
+        console.log("DEBUG - Enviando para:", GOOGLE_SCRIPT_URL);
+        
         await fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
           mode: 'no-cors',
