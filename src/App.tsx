@@ -19,7 +19,14 @@ import {
   AlertTriangle,
   Copy,
   ExternalLink,
-  Instagram
+  Instagram,
+  QrCode,
+  Check,
+  MessageSquare,
+  Briefcase,
+  Mail,
+  Bug,
+  User
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -95,30 +102,34 @@ const validateImportedData = (data: any): boolean => {
 
 // --- Helper Components ---
 
-const Card = ({ children, title, icon: Icon, className = "" }: { children: React.ReactNode, title: string, icon: any, className?: string }) => (
+const Card = ({ children, title, icon: Icon, className = "", delay = 0 }: { children: React.ReactNode, title: string, icon: any, className?: string, delay?: number }) => (
   <motion.div 
     initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    className={`bg-white rounded-2xl shadow-sm border border-orange-100 overflow-hidden ${className}`}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ duration: 0.5, delay }}
+    className={`bg-white rounded-3xl studio-shadow border border-slate-100 overflow-hidden ${className}`}
   >
-    <div className="bg-orange-50 px-6 py-4 border-b border-orange-100 flex items-center gap-3">
-      <div className="p-2 bg-orange-100 rounded-lg text-orange-600">
-        <Icon size={20} />
+    <div className="px-8 py-6 border-b border-slate-50 flex items-center justify-between">
+      <div className="flex items-center gap-4">
+        <div className="p-2.5 bg-brand-primary/5 rounded-2xl text-brand-primary border border-brand-primary/10 group-hover:bg-brand-primary group-hover:text-white transition-all duration-500">
+          <Icon size={22} strokeWidth={2} />
+        </div>
+        <h2 className="font-display font-bold text-slate-800 tracking-tight text-lg">{title}</h2>
       </div>
-      <h2 className="font-semibold text-slate-800 tracking-tight">{title}</h2>
     </div>
-    <div className="p-6">
+    <div className="p-8">
       {children}
     </div>
   </motion.div>
 );
 
 const InputGroup = ({ label, value, onChange, type = "number", suffix = "", prefix = "", step = "0.01", placeholder = "", className = "" }: any) => (
-  <div className={`space-y-1.5 ${className}`}>
-    <label className="text-sm font-medium text-slate-600 ml-1">{label}</label>
+  <div className={`space-y-2 ${className}`}>
+    <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">{label}</label>
     <div className="relative group">
       {prefix && (
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-orange-500 transition-colors">
+        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors">
           {prefix}
         </div>
       )}
@@ -135,10 +146,10 @@ const InputGroup = ({ label, value, onChange, type = "number", suffix = "", pref
           }
         }}
         placeholder={placeholder}
-        className={`w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-slate-700 ${prefix ? 'pl-10' : ''} ${suffix ? 'pr-12' : ''}`}
+        className={`w-full bg-slate-50/50 border border-slate-100 rounded-2xl px-5 py-3.5 outline-none focus:ring-4 focus:ring-brand-primary/5 focus:border-brand-primary focus:bg-white transition-all text-slate-700 font-medium placeholder:text-slate-300 ${prefix ? 'pl-11' : ''} ${suffix ? 'pr-14' : ''}`}
       />
       {suffix && (
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-slate-400">
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-300 group-focus-within:text-brand-primary transition-colors">
           {suffix}
         </div>
       )}
@@ -159,6 +170,7 @@ export default function App() {
   const [otherCosts, setOtherCosts] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
+  const [showPixCopySuccess, setShowPixCopySuccess] = useState(false);
 
   // Load from URL on mount
   useEffect(() => {
@@ -210,6 +222,12 @@ export default function App() {
     setShareUrl(finalUrl);
     navigator.clipboard.writeText(finalUrl);
     alert("Link copiado para a área de transferência!");
+  };
+
+  const copyPixKey = () => {
+    navigator.clipboard.writeText('396cca9f-51b2-4e52-9fdf-716cc6a90277');
+    setShowPixCopySuccess(true);
+    setTimeout(() => setShowPixCopySuccess(false), 2000);
   };
 
   const handleWhatsAppShare = () => {
@@ -296,23 +314,22 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFCF8] text-slate-800 font-sans selection:bg-orange-100 selection:text-orange-900 pb-20">
+    <div className="min-h-screen bg-surface-base text-text-main font-sans selection:bg-brand-primary/10 selection:text-brand-primary pb-20">
       {/* Header */}
-      <header className="bg-white border-b border-orange-100 sticky top-0 z-30">
-        <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-orange-500/20">
-              <Calculator size={24} />
+      <header className="bg-white/80 backdrop-blur-xl border-b border-slate-100 sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center text-brand-secondary shadow-2xl shadow-slate-900/20 rotate-3 hover:rotate-0 transition-transform duration-500 border border-white/10">
+              <Calculator size={24} strokeWidth={2.5} />
             </div>
             <div>
-              <h1 className="font-display font-bold text-lg leading-none text-slate-900">Precificação Artesanal</h1>
-              <p className="text-xs text-slate-500 mt-1">Modo Temporário e Seguro</p>
+              <h1 className="font-display font-black text-xl tracking-tight text-slate-900 uppercase">Precificação</h1>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <button 
               onClick={handleReset}
-              className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+              className="p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all active:scale-90"
               title="Limpar tudo"
             >
               <RotateCcw size={20} />
@@ -320,7 +337,7 @@ export default function App() {
 
             <button 
               onClick={handleGenerateLink}
-              className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-slate-800 transition-all shadow-sm"
+              className="flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-2xl text-sm font-bold hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/10 active:scale-95"
             >
               <Share2 size={18} />
               <span className="hidden sm:inline">Compartilhar</span>
@@ -329,32 +346,55 @@ export default function App() {
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-8">
+      <main className="max-w-6xl mx-auto px-6 py-12 space-y-10">
+        {/* Beta Disclaimer */}
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-slate-50 rounded-3xl p-6 flex items-center gap-5 text-slate-900 border border-slate-100 studio-shadow relative overflow-hidden group"
+        >
+          <div className="absolute top-0 right-0 p-4 text-slate-200 group-hover:scale-110 transition-transform duration-700">
+            <Bug size={100} />
+          </div>
+          <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center shrink-0 border border-slate-200">
+            <Bug size={20} className="text-brand-primary" />
+          </div>
+          <div className="relative z-10">
+            <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Aviso de Desenvolvimento</p>
+            <p className="text-sm text-slate-600 leading-relaxed max-w-2xl">
+              Esta é uma versão <strong>Beta</strong>. Os cálculos são precisos, mas a interface está em constante evolução. Se encontrar algo estranho, me avise!
+            </p>
+          </div>
+        </motion.div>
+
         {/* Share Modal/Alert */}
         <AnimatePresence>
           {shareUrl && (
             <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="mb-8 p-6 bg-orange-50 border-2 border-orange-200 rounded-3xl shadow-lg relative overflow-hidden"
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="p-8 bg-white border border-slate-100 rounded-[2.5rem] shadow-2xl shadow-slate-200 relative overflow-hidden text-slate-900"
             >
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-orange-100 rounded-lg text-orange-600">
-                    <Share2 size={20} />
+              <div className="absolute top-0 right-0 p-8 text-slate-50">
+                <Share2 size={120} />
+              </div>
+              <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+                <div className="flex items-center gap-5">
+                  <div className="w-14 h-14 bg-brand-primary/10 rounded-2xl flex items-center justify-center border border-brand-primary/20">
+                    <Share2 size={24} className="text-brand-primary" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-slate-800">Link de Compartilhamento Gerado!</h3>
-                    <p className="text-xs text-slate-500">Você pode enviar este link para qualquer pessoa ou para seu próprio WhatsApp.</p>
+                    <h3 className="text-xl font-display font-black tracking-tight">Link Gerado!</h3>
+                    <p className="text-sm text-slate-500">Seu projeto foi codificado e está pronto para envio.</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 w-full sm:w-auto">
+                <div className="flex items-center gap-3 w-full md:w-auto">
                   <button 
                     onClick={handleWhatsAppShare}
-                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-[#25D366] text-white px-4 py-2 rounded-xl text-sm font-bold hover:opacity-90 transition-all"
+                    className="flex-1 md:flex-none flex items-center justify-center gap-3 bg-brand-primary text-white px-8 py-4 rounded-2xl text-sm font-black hover:bg-brand-secondary transition-all active:scale-95 shadow-xl shadow-brand-primary/10"
                   >
-                    <ExternalLink size={16} />
+                    <ExternalLink size={18} />
                     WhatsApp
                   </button>
                   <button 
@@ -362,82 +402,90 @@ export default function App() {
                       navigator.clipboard.writeText(shareUrl);
                       alert("Link copiado!");
                     }}
-                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-slate-800 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-slate-700 transition-all"
+                    className="flex-1 md:flex-none flex items-center justify-center gap-3 bg-slate-100 text-slate-900 px-8 py-4 rounded-2xl text-sm font-black hover:bg-slate-200 transition-all active:scale-95 border border-slate-200"
                   >
-                    <Copy size={16} />
+                    <Copy size={18} />
                     Copiar
                   </button>
                   <button 
                     onClick={() => setShareUrl(null)}
-                    className="p-2 text-slate-400 hover:text-slate-600"
+                    className="p-3 bg-slate-50 hover:bg-slate-100 rounded-2xl transition-colors text-slate-400"
                   >
-                    <RotateCcw size={18} />
+                    <RotateCcw size={20} />
                   </button>
                 </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
+
         {/* Error Alert */}
         <AnimatePresence>
           {error && (
             <motion.div 
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="mb-8 p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3 text-red-700"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              className="p-6 bg-red-50 border border-red-100 rounded-3xl flex items-center gap-4 text-red-700 shadow-lg shadow-red-100/50"
             >
-              <AlertTriangle size={20} className="shrink-0" />
-              <p className="text-sm font-medium">{error}</p>
-              <button onClick={() => setError(null)} className="ml-auto text-red-400 hover:text-red-600">
-                <RotateCcw size={16} />
+              <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center shrink-0 border border-red-200">
+                <AlertTriangle size={20} />
+              </div>
+              <p className="text-sm font-bold flex-1">{error}</p>
+              <button onClick={() => setError(null)} className="p-2 hover:bg-red-100 rounded-xl transition-colors">
+                <RotateCcw size={18} />
               </button>
             </motion.div>
           )}
         </AnimatePresence>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           
           {/* Left Column: Inputs */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-7 space-y-10">
             
             {/* Ingredients */}
-            <Card title="Ingredientes" icon={Calculator}>
+            <Card title="Ingredientes" icon={Package} delay={0.1}>
               <div className="space-y-4">
                 <AnimatePresence mode="popLayout">
-                  {ingredients.map((ing) => (
+                  {ingredients.map((ing, idx) => (
                     <motion.div 
                       key={ing.id}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      className="p-4 bg-slate-50 rounded-xl border border-slate-200 relative"
+                      transition={{ delay: idx * 0.05 }}
+                      className="p-6 bg-slate-50/50 rounded-3xl border border-slate-100 relative group hover:bg-white hover:border-slate-200 hover:studio-shadow transition-all duration-500"
                     >
-                      <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Ingrediente</h3>
+                      <div className="flex justify-between items-center mb-6">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-white rounded-xl flex items-center justify-center text-[10px] font-black text-brand-primary border border-slate-200 shadow-sm">
+                            {idx + 1}
+                          </div>
+                          <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Componente</h3>
+                        </div>
                         <button 
                           onClick={() => removeIngredient(ing.id)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-200 rounded-lg shadow-sm transition-all text-xs font-bold"
+                          className="p-2.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all border border-transparent hover:border-red-100"
                         >
-                          <Trash2 size={14} />
-                          Remover
+                          <Trash2 size={18} strokeWidth={2} />
                         </button>
                       </div>
                       
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <InputGroup 
-                          label="Nome do Ingrediente" 
+                          label="Nome" 
                           type="text" 
                           value={ing.name} 
                           onChange={(v: string) => updateIngredient(ing.id, 'name', v)}
-                          placeholder="Ex: Leite Integral"
+                          placeholder="Ex: Tecido de Algodão"
                         />
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-2 gap-4">
                           <InputGroup 
-                            label="Preço Total" 
-                            prefix="R$" 
+                            label="Preço Pago" 
                             value={ing.totalPrice} 
                             onChange={(v: number) => updateIngredient(ing.id, 'totalPrice', v)}
+                            prefix={<DollarSign size={14} className="text-brand-primary" />}
                           />
                           <InputGroup 
                             label="Qtd Total" 
@@ -446,34 +494,26 @@ export default function App() {
                             suffix={ing.unit}
                           />
                         </div>
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="sm:col-span-2 grid grid-cols-2 gap-4">
                           <InputGroup 
                             label="Qtd Usada" 
                             value={ing.usedQuantity} 
                             onChange={(v: number) => updateIngredient(ing.id, 'usedQuantity', v)}
                             suffix={ing.unit}
                           />
-                          <div className="space-y-1.5">
-                            <label className="text-sm font-medium text-slate-600 ml-1">Unidade</label>
-                            <select 
-                              value={ing.unit}
-                              onChange={(e) => updateIngredient(ing.id, 'unit', e.target.value)}
-                              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-slate-700 appearance-none"
-                            >
-                              <option value="g">Gramas (g)</option>
-                              <option value="kg">Quilos (kg)</option>
-                              <option value="ml">Mililitros (ml)</option>
-                              <option value="l">Litros (l)</option>
-                              <option value="un">Unidades (un)</option>
-                            </select>
-                          </div>
-                        </div>
-                        <div className="flex items-end justify-end">
-                          <div className="text-right">
-                            <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Custo Proporcional</p>
-                            <p className="text-lg font-display font-bold text-orange-600">
-                              R$ {((ing.totalPrice / (ing.totalQuantity || 1)) * ing.usedQuantity).toFixed(2)}
-                            </p>
+                          <div className="flex flex-col justify-end pb-1 px-1">
+                            <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-2">Unidade</p>
+                            <div className="flex gap-2">
+                              {['g', 'ml', 'un', 'cm'].map(u => (
+                                <button
+                                  key={u}
+                                  onClick={() => updateIngredient(ing.id, 'unit', u)}
+                                  className={`flex-1 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${ing.unit === u ? 'bg-slate-900 text-white shadow-lg' : 'bg-white text-slate-400 border border-slate-100 hover:border-slate-200'}`}
+                                >
+                                  {u}
+                                </button>
+                              ))}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -483,52 +523,56 @@ export default function App() {
 
                 <button 
                   onClick={addIngredient}
-                  className="w-full py-3 border-2 border-dashed border-slate-200 rounded-xl text-slate-400 hover:text-orange-500 hover:border-orange-200 hover:bg-orange-50 transition-all flex items-center justify-center gap-2 font-medium"
+                  className="w-full py-5 border-2 border-dashed border-slate-200 rounded-3xl text-slate-400 hover:text-brand-primary hover:border-brand-primary hover:bg-brand-primary/5 transition-all flex items-center justify-center gap-3 font-black text-[11px] uppercase tracking-widest group shadow-sm hover:shadow-md"
                 >
-                  <Plus size={20} />
-                  Adicionar Ingrediente
+                  <Plus size={18} strokeWidth={3} className="group-hover:rotate-90 transition-transform duration-500" />
+                  Adicionar Ingrediente / Material
                 </button>
               </div>
             </Card>
 
-            {/* Packaging */}
-            <Card title="Embalagens" icon={Package}>
-              <div className="space-y-4">
+            <Card title="Embalagens" icon={Package} delay={0.2}>
+              <div className="space-y-6">
                 <AnimatePresence mode="popLayout">
-                  {packaging.map((pack) => (
+                  {packaging.map((pack, idx) => (
                     <motion.div 
                       key={pack.id}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      className="p-4 bg-slate-50 rounded-xl border border-slate-200 relative"
+                      transition={{ delay: idx * 0.05 }}
+                      className="p-6 bg-slate-50/50 rounded-3xl border border-slate-100 relative group hover:bg-white hover:border-slate-200 hover:studio-shadow transition-all duration-500"
                     >
-                      <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Embalagem</h3>
+                      <div className="flex justify-between items-center mb-6">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-white rounded-xl flex items-center justify-center text-[10px] font-black text-brand-primary border border-slate-200 shadow-sm">
+                            {idx + 1}
+                          </div>
+                          <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Embalagem</h3>
+                        </div>
                         <button 
                           onClick={() => removePackaging(pack.id)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-200 rounded-lg shadow-sm transition-all text-xs font-bold"
+                          className="p-2.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all border border-transparent hover:border-red-100"
                         >
-                          <Trash2 size={14} />
-                          Remover
+                          <Trash2 size={18} strokeWidth={2} />
                         </button>
                       </div>
                       
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                         <div className="sm:col-span-1">
                           <InputGroup 
                             label="Item" 
                             type="text" 
                             value={pack.name} 
                             onChange={(v: string) => updatePackaging(pack.id, 'name', v)}
-                            placeholder="Ex: Pote 250g"
+                            placeholder="Ex: Caixa de Presente"
                           />
                         </div>
                         <InputGroup 
                           label="Preço Unitário" 
-                          prefix="R$" 
                           value={pack.unitPrice} 
                           onChange={(v: number) => updatePackaging(pack.id, 'unitPrice', v)}
+                          prefix={<DollarSign size={14} className="text-brand-primary" />}
                         />
                         <InputGroup 
                           label="Quantidade" 
@@ -543,143 +587,130 @@ export default function App() {
 
                 <button 
                   onClick={addPackaging}
-                  className="w-full py-3 border-2 border-dashed border-slate-200 rounded-xl text-slate-400 hover:text-orange-500 hover:border-orange-200 hover:bg-orange-50 transition-all flex items-center justify-center gap-2 font-medium"
+                  className="w-full py-5 border-2 border-dashed border-slate-200 rounded-3xl text-slate-400 hover:text-brand-primary hover:border-brand-primary hover:bg-brand-primary/5 transition-all flex items-center justify-center gap-3 font-black text-[11px] uppercase tracking-widest group shadow-sm hover:shadow-md"
                 >
-                  <Plus size={20} />
+                  <Plus size={18} strokeWidth={3} className="group-hover:rotate-90 transition-transform duration-500" />
                   Adicionar Embalagem
                 </button>
               </div>
             </Card>
 
             {/* Labor & Indirect */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-              <Card title="Mão de Obra" icon={Clock}>
-                <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
+              <Card title="Mão de Obra" icon={Clock} delay={0.3}>
+                <div className="space-y-6">
                   <InputGroup 
-                    label="Valor da sua Hora" 
-                    prefix="R$" 
+                    label="Valor da Hora" 
                     value={labor.hourlyRate} 
                     onChange={(v: number) => setLabor({ ...labor, hourlyRate: validateNumber(v) })}
+                    prefix={<DollarSign size={14} className="text-brand-primary" />}
                   />
                   <InputGroup 
-                    label="Tempo Gasto (Horas)" 
+                    label="Tempo Gasto" 
                     value={labor.hoursSpent} 
                     onChange={(v: number) => setLabor({ ...labor, hoursSpent: validateNumber(v) })}
-                    suffix="h"
+                    suffix="hrs"
                   />
-                  <div className="pt-2 text-right">
-                    <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Custo do Tempo</p>
-                    <p className="text-xl font-display font-bold text-slate-700">R$ {laborTotal.toFixed(2)}</p>
+                  <div className="pt-4 border-t border-slate-50 flex items-center justify-between">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Custo do Tempo</p>
+                    <p className="text-xl font-display font-black text-slate-900">R$ {laborTotal.toFixed(2)}</p>
                   </div>
                 </div>
               </Card>
 
-              <Card title="Custos Indiretos" icon={Flame}>
-                <div className="space-y-4">
+              <Card title="Custos Fixos" icon={Flame} delay={0.4}>
+                <div className="space-y-6">
                   <InputGroup 
-                    label="Gás/Energia (% sobre ingredientes)" 
+                    label="Taxa Estimada (%)" 
                     value={indirectRate} 
                     onChange={(v: number) => setIndirectRate(Math.min(100, validateNumber(v)))}
                     suffix="%"
                   />
-                  <div className="p-3 bg-blue-50 rounded-xl flex gap-3 text-blue-700">
-                    <Info size={18} className="shrink-0 mt-0.5" />
-                    <p className="text-xs leading-relaxed">
-                      O mercado costuma usar entre 10% e 20% para cobrir gastos difíceis de medir exatamente.
+                  <div className="p-4 bg-blue-50 rounded-2xl flex gap-4 text-blue-700 border border-blue-100">
+                    <Info size={18} className="shrink-0 mt-0.5 text-blue-500" />
+                    <p className="text-[11px] leading-relaxed font-medium">
+                      Recomendamos entre 10% e 20% para cobrir gastos como luz, água e internet.
                     </p>
                   </div>
-                  <div className="pt-2 text-right">
-                    <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Custo Estimado</p>
-                    <p className="text-xl font-display font-bold text-slate-700">R$ {indirectTotal.toFixed(2)}</p>
+                  <div className="pt-4 border-t border-slate-50 flex items-center justify-between">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Custo Indireto</p>
+                    <p className="text-xl font-display font-black text-slate-900">R$ {indirectTotal.toFixed(2)}</p>
                   </div>
                 </div>
               </Card>
             </div>
 
             {/* Yield & Others */}
-            <Card title="Rendimento e Extras" icon={TrendingUp}>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <Card title="Rendimento e Extras" icon={TrendingUp} delay={0.5}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                 <InputGroup 
-                  label="Rendimento da Receita" 
+                  label="Rendimento Total" 
                   value={yieldQuantity} 
                   onChange={(v: number) => setYieldQuantity(Math.max(1, validateNumber(v)))}
                   suffix="un"
-                  placeholder="Quantos potes rende?"
+                  placeholder="Ex: 10 potes"
                 />
                 <InputGroup 
-                  label="Outros Custos (Entrega, Taxas)" 
-                  prefix="R$" 
+                  label="Outros Custos" 
                   value={otherCosts} 
                   onChange={(v: number) => setOtherCosts(validateNumber(v))}
+                  prefix={<DollarSign size={14} className="text-brand-primary" />}
                   placeholder="Ex: R$ 5,00"
                 />
               </div>
             </Card>
 
             {/* Mathematical Formulas & Transparency */}
-            <div className="p-8 bg-white rounded-3xl border border-orange-100 shadow-sm">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-orange-100 rounded-lg text-orange-600">
-                  <Info size={20} />
-                </div>
-                <h3 className="font-display font-bold text-xl text-slate-800">Transparência nos Cálculos</h3>
+            <div className="p-10 bg-white rounded-[2.5rem] border border-slate-100 studio-shadow overflow-hidden relative group">
+              <div className="absolute top-0 right-0 p-10 text-slate-50 group-hover:scale-110 transition-transform duration-700">
+                <Info size={120} />
               </div>
-              
-              <div className="space-y-8">
-                <p className="text-sm text-slate-600 leading-relaxed">
-                  Para garantir total confiança nos seus resultados, detalhamos abaixo as fórmulas matemáticas exatas utilizadas por nossa calculadora:
-                </p>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100">
-                    <h4 className="font-bold text-orange-600 text-sm mb-3">Custo de Ingredientes</h4>
-                    <div className="bg-white p-3 rounded-xl border border-slate-200 font-mono text-[11px] text-slate-700 mb-3">
-                      (Preço Total ÷ Qtd Total) × Qtd Usada
-                    </div>
-                    <p className="text-xs text-slate-500 leading-relaxed">
-                      Calculamos o valor exato de cada grama ou mililitro utilizado na sua receita específica.
-                    </p>
+              <div className="relative z-10">
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 border border-blue-100">
+                    <Info size={24} />
                   </div>
-
-                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100">
-                    <h4 className="font-bold text-orange-600 text-sm mb-3">Mão de Obra</h4>
-                    <div className="bg-white p-3 rounded-xl border border-slate-200 font-mono text-[11px] text-slate-700 mb-3">
-                      Valor da Hora × Tempo Gasto
-                    </div>
-                    <p className="text-xs text-slate-500 leading-relaxed">
-                      Transformamos o seu tempo de trabalho em custo financeiro real para o produto.
-                    </p>
-                  </div>
-
-                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100">
-                    <h4 className="font-bold text-orange-600 text-sm mb-3">Custos Indiretos</h4>
-                    <div className="bg-white p-3 rounded-xl border border-slate-200 font-mono text-[11px] text-slate-700 mb-3">
-                      Total Ingredientes × (% Estimada)
-                    </div>
-                    <p className="text-xs text-slate-500 leading-relaxed">
-                      Estimativa para cobrir gastos de gás, energia e água (sugerido entre 10% e 20%).
-                    </p>
-                  </div>
-
-                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100">
-                    <h4 className="font-bold text-orange-600 text-sm mb-3">Preço de Venda</h4>
-                    <div className="bg-white p-3 rounded-xl border border-slate-200 font-mono text-[11px] text-slate-700 mb-3">
-                      Custo Unitário × (1 + Margem ÷ 100)
-                    </div>
-                    <p className="text-xs text-slate-500 leading-relaxed">
-                      Aplicamos o seu lucro desejado sobre o custo final de cada unidade produzida.
-                    </p>
+                  <div>
+                    <h3 className="font-display font-black text-xl text-slate-900 tracking-tight">Transparência Studio</h3>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Fórmulas de Cálculo</p>
                   </div>
                 </div>
+                
+                <div className="space-y-10">
+                  <p className="text-sm text-slate-500 leading-relaxed max-w-2xl">
+                    Para garantir total confiança nos seus resultados, detalhamos abaixo as fórmulas matemáticas exatas utilizadas por nossa calculadora:
+                  </p>
 
-                <div className="pt-4 border-t border-slate-100">
-                  <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-2xl text-blue-800">
-                    <Calculator size={18} className="shrink-0 mt-1" />
-                    <div>
-                      <h5 className="font-bold text-sm mb-1">Fórmula do Custo Unitário Final</h5>
-                      <p className="text-xs leading-relaxed opacity-90">
-                        (Soma de todos os custos + Extras) ÷ Rendimento Total = <span className="font-bold">Custo Unitário</span>
-                      </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {[
+                      { title: "Ingredientes", formula: "(Preço ÷ Qtd) × Usada", desc: "Custo exato de cada grama ou mililitro." },
+                      { title: "Mão de Obra", formula: "Valor Hora × Tempo", desc: "Transformamos seu tempo em custo real." },
+                      { title: "Custos Fixos", formula: "Ingredientes × % Taxa", desc: "Estimativa para despesas operacionais." },
+                      { title: "Preço Final", formula: "Custo Unit. × (1 + Margem)", desc: "Seu lucro aplicado sobre o custo final." }
+                    ].map((f, i) => (
+                      <div key={i} className="p-6 bg-slate-50/50 rounded-3xl border border-slate-100 hover:bg-white hover:studio-shadow transition-all duration-500">
+                        <h4 className="font-black text-[10px] text-slate-400 uppercase tracking-widest mb-4">{f.title}</h4>
+                        <div className="bg-slate-50 p-4 rounded-2xl font-mono text-xs text-brand-primary mb-4 border border-slate-100">
+                          {f.formula}
+                        </div>
+                        <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
+                          {f.desc}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="pt-8 border-t border-slate-100">
+                    <div className="flex items-start gap-5 p-6 bg-slate-50 rounded-3xl text-slate-900 border border-slate-200 studio-shadow">
+                      <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shrink-0 border border-slate-100 shadow-sm">
+                        <Calculator size={20} className="text-brand-primary" />
+                      </div>
+                      <div>
+                        <h5 className="font-black text-[10px] text-slate-400 uppercase tracking-widest mb-2">Fórmula do Custo Unitário Final</h5>
+                        <p className="text-sm leading-relaxed font-medium text-slate-700">
+                          (Soma de Custos + Extras) ÷ Rendimento = <span className="text-brand-primary font-black">Custo Unitário</span>
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -688,129 +719,179 @@ export default function App() {
           </div>
 
           {/* Right Column: Results */}
-          <div className="space-y-8">
-            <div className="sticky top-24">
-              <motion.div 
-                layout
-                className="bg-white rounded-3xl p-8 text-slate-800 border-2 border-orange-100 shadow-xl shadow-orange-500/5 relative overflow-hidden"
-              >
-                {/* Decorative background elements */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-orange-50 rounded-full -mr-16 -mt-16 blur-3xl" />
-                <div className="absolute bottom-0 left-0 w-32 h-32 bg-orange-50 rounded-full -ml-16 -mb-16 blur-3xl" />
-
-                <h2 className="text-orange-600 font-bold uppercase tracking-widest text-xs mb-8 flex items-center gap-2 relative z-10">
-                  <Calculator size={14} />
-                  Resumo da Receita
-                </h2>
-
-                <div className="space-y-6 relative z-10">
-                  <div className="flex justify-between items-center pb-4 border-b border-slate-100">
-                    <span className="text-slate-500 text-sm font-medium">Total Ingredientes</span>
-                    <span className="font-bold text-slate-700">R$ {ingredientsTotal.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between items-center pb-4 border-b border-slate-100">
-                    <span className="text-slate-500 text-sm font-medium">Total Embalagens</span>
-                    <span className="font-bold text-slate-700">R$ {packagingTotal.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between items-center pb-4 border-b border-slate-100">
-                    <span className="text-slate-500 text-sm font-medium">Mão de Obra</span>
-                    <span className="font-bold text-slate-700">R$ {laborTotal.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between items-center pb-4 border-b border-slate-100">
-                    <span className="text-slate-500 text-sm font-medium">Gás/Energia</span>
-                    <span className="font-bold text-slate-700">R$ {indirectTotal.toFixed(2)}</span>
-                  </div>
-                  
-                  <div className="pt-4">
-                    <div className="flex justify-between items-end mb-2">
-                      <span className="text-slate-500 text-sm font-medium">Custo Total Produção</span>
-                      <span className="text-2xl font-display font-black text-orange-600">R$ {totalProductionCost.toFixed(2)}</span>
+          <div className="lg:col-span-5 space-y-10">
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="sticky top-32"
+            >
+              <div className="bg-white rounded-[2.5rem] p-10 text-slate-900 border border-slate-100 studio-shadow relative overflow-hidden">
+                <div className="absolute -top-24 -right-24 w-64 h-64 bg-brand-primary/5 rounded-full blur-3xl" />
+                <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-brand-secondary/5 rounded-full blur-3xl" />
+                
+                <div className="relative z-10 space-y-10">
+                  <div className="flex items-center justify-between">
+                    <div className="w-12 h-12 bg-brand-primary/10 rounded-2xl flex items-center justify-center border border-brand-primary/20">
+                      <TrendingUp size={24} className="text-brand-primary" />
                     </div>
-                    <div className="flex justify-between items-end">
-                      <span className="text-slate-500 text-sm font-medium">Custo por Unidade</span>
-                      <span className="text-xl font-display font-bold text-slate-800">R$ {unitCost.toFixed(2)}</span>
+                    <div className="text-right">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Status do Projeto</p>
+                      <div className="flex items-center gap-2 justify-end">
+                        <div className="w-2 h-2 bg-brand-accent rounded-full animate-pulse" />
+                        <span className="text-xs font-bold text-brand-accent uppercase tracking-widest">Calculado</span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="mt-12 pt-8 border-t border-slate-100 relative z-10">
-                  <div className="mb-6">
-                    <InputGroup 
-                      label="Margem de Lucro (%)" 
-                      value={markup} 
-                      onChange={(v: number) => setMarkup(validateNumber(v))}
-                      suffix="%"
-                      className="!bg-slate-50 !border-slate-200"
-                    />
+                  <div className="space-y-2">
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Preço de Venda Sugerido</p>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-display font-black text-slate-300">R$</span>
+                      <span className="text-6xl font-display font-black tracking-tighter tabular-nums text-slate-900">
+                        {suggestedPrice.toFixed(2)}
+                      </span>
+                    </div>
                   </div>
-                  
-                  <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-6 text-center shadow-lg shadow-orange-500/30">
-                    <p className="text-orange-50 text-xs font-bold uppercase tracking-widest mb-1">Preço de Venda Sugerido</p>
-                    <p className="text-4xl font-display font-black text-white">R$ {suggestedPrice.toFixed(2)}</p>
-                    <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 rounded-full">
-                      <p className="text-orange-50 text-[10px] font-bold">
-                        Lucro Bruto/Un: R$ {(suggestedPrice - unitCost).toFixed(2)}
-                      </p>
+
+                  <div className="grid grid-cols-2 gap-6 pt-6 border-t border-slate-100">
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Custo Total</p>
+                      <p className="text-xl font-display font-black tracking-tight text-slate-900">R$ {totalProductionCost.toFixed(2)}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Lucro Líquido</p>
+                      <p className="text-xl font-display font-black tracking-tight text-brand-primary">R$ {(suggestedPrice - unitCost).toFixed(2)}</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-6 pt-6">
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-end">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Margem de Lucro</label>
+                        <span className="text-sm font-black text-brand-primary">{markup}%</span>
+                      </div>
+                      <input 
+                        type="range" 
+                        min="0" 
+                        max="300" 
+                        value={markup} 
+                        onChange={(e) => setMarkup(validateNumber(parseInt(e.target.value)))}
+                        className="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer accent-brand-primary"
+                      />
                     </div>
                   </div>
                 </div>
-              </motion.div>
+              </div>
 
-              {/* Tip Card */}
-              <div className="mt-6 p-6 bg-orange-50 rounded-2xl border border-orange-100 flex gap-4">
-                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-orange-500 shrink-0 shadow-sm">
-                  <DollarSign size={20} />
+              {/* Quick Info Card */}
+              <div className="mt-6 p-6 bg-white rounded-3xl border border-slate-100 studio-shadow flex items-start gap-4">
+                <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-500 shrink-0 border border-blue-100">
+                  <Info size={20} />
                 </div>
                 <div>
-                  <h4 className="font-bold text-slate-800 text-sm">Dica de Ouro</h4>
-                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                    Não esqueça de incluir no custo o trajeto para entrega ou a taxa da maquininha de cartão. Muitas pessoas ignoram esses detalhes e acabam "pagando para trabalhar".
+                  <p className="text-xs font-bold text-slate-800 mb-1">Dica de Especialista</p>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    Não esqueça de incluir custos invisíveis como energia, internet e depreciação de ferramentas nos Custos Fixos.
                   </p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
 
         </div>
       </main>
 
       {/* Mobile Sticky Summary */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-orange-100 p-4 z-40 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
-        <div className="flex items-center justify-between max-w-5xl mx-auto">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t border-slate-100 p-6 z-40 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+        <div className="flex items-center justify-between max-w-6xl mx-auto">
           <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Preço Sugerido</p>
-            <p className="text-xl font-display font-black text-orange-600">R$ {suggestedPrice.toFixed(2)}</p>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Preço Sugerido</p>
+            <p className="text-2xl font-display font-black text-slate-900 tracking-tighter">R$ {suggestedPrice.toFixed(2)}</p>
           </div>
-          <div className="text-right">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Custo Unitário</p>
-            <p className="text-lg font-display font-bold text-slate-700">R$ {unitCost.toFixed(2)}</p>
-          </div>
+          <button 
+            onClick={handleGenerateLink}
+            className="bg-brand-primary text-white p-4 rounded-2xl shadow-xl shadow-brand-primary/20 active:scale-90 transition-transform"
+          >
+            <Share2 size={20} />
+          </button>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-orange-100 py-12 mt-12">
-        <div className="max-w-5xl mx-auto px-4 text-center">
-          <div className="flex flex-col items-center gap-4">
-            <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-500 mb-2">
-              <Calculator size={24} />
+      <footer className="bg-white border-t border-slate-100 py-24 mt-20 relative overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-6xl h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
+        
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="space-y-12">
+            {/* Support Section */}
+            <div className="bg-slate-50 rounded-[2.5rem] p-8 md:p-12 border border-slate-100 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-10 text-slate-100 group-hover:scale-110 transition-transform duration-700">
+                <Briefcase size={120} />
+              </div>
+              
+              <div className="relative z-10 max-w-2xl mx-auto text-center">
+                <div className="flex flex-col items-center gap-4 mb-10">
+                  <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-brand-primary studio-shadow">
+                    <QrCode size={32} />
+                  </div>
+                  <div>
+                    <h3 className="font-display font-black text-2xl text-slate-900 tracking-tight">Apoie o Projeto</h3>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Sua doação mantém o Studio ativo</p>
+                  </div>
+                </div>
+
+                <div className="space-y-8">
+                  <button 
+                    onClick={copyPixKey}
+                    className="w-full p-6 bg-white rounded-3xl studio-shadow border border-slate-100 flex flex-col md:flex-row items-center gap-6 hover:-translate-y-1 transition-all active:scale-95 group/pix relative overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-emerald-500/0 group-hover/pix:bg-emerald-500/5 transition-colors" />
+                    <div className="w-14 h-14 bg-[#32BCAD] rounded-full flex items-center justify-center text-white shadow-lg shadow-[#32BCAD]/20 shrink-0 relative z-10">
+                      <svg viewBox="0 0 24 24" className="w-8 h-8 fill-current" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 0L7.66 4.34L12 8.68L16.34 4.34L12 0ZM0 12L4.34 7.66L8.68 12L4.34 16.34L0 12ZM12 24L16.34 19.66L12 15.32L7.66 19.66L12 24ZM24 12L19.66 16.34L15.32 12L19.66 7.66L24 12Z" />
+                      </svg>
+                    </div>
+                    <div className="text-center md:text-left overflow-hidden flex-1 relative z-10">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Doação via Pix (Clique para Copiar)</p>
+                      <code className="text-sm font-mono font-bold text-slate-900 break-all block">396cca9f-51b2-4e52-9fdf-716cc6a90277</code>
+                    </div>
+                    <div className="shrink-0 relative z-10">
+                      {showPixCopySuccess ? (
+                        <div className="flex items-center gap-2 text-emerald-600 font-black text-[10px] uppercase tracking-widest animate-in fade-in slide-in-from-right-2">
+                          <Check size={16} />
+                          Copiado!
+                        </div>
+                      ) : (
+                        <div className="w-10 h-10 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center group-hover/pix:bg-slate-900 group-hover/pix:text-white transition-colors">
+                          <Copy size={18} />
+                        </div>
+                      )}
+                    </div>
+                  </button>
+
+                  <div className="pt-4">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Contato Direto</p>
+                    <a 
+                      href="https://www.instagram.com/kelber_weike?igsh=OTEzMDd2YTNheTc2" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-3 px-8 py-5 bg-white text-slate-900 rounded-3xl font-black text-xs uppercase tracking-widest studio-shadow hover:-translate-y-1 transition-all active:scale-95 border border-slate-100"
+                    >
+                      <Instagram size={20} className="text-pink-500" />
+                      Instagram
+                    </a>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-slate-500 font-medium">Aplicação desenvolvida por</p>
-              <p className="text-lg font-display font-bold text-slate-800">Kelber Weike</p>
+
+            <div className="pt-12 border-t border-slate-50">
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">
+                Desenvolvido por Kelber Weike
+              </p>
             </div>
-            <a 
-              href="https://www.instagram.com/kelber_weike?igsh=OTEzMDd2YTNheTc2" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white rounded-2xl font-bold text-sm shadow-lg hover:scale-105 transition-transform active:scale-95"
-            >
-              <Instagram size={20} />
-              Siga no Instagram
-            </a>
-            <p className="text-[10px] text-slate-400 mt-4 uppercase tracking-widest font-bold">
-              © 2026 • Ferramenta de Apoio ao Empreendedor Artesanal
-            </p>
           </div>
         </div>
       </footer>
