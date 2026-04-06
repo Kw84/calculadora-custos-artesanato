@@ -115,38 +115,67 @@ const Card = ({ children, title, icon: Icon, className = "", delay = 0 }: { chil
   </motion.div>
 );
 
-const InputGroup = ({ label, value, onChange, type = "number", suffix = "", prefix = "", step = "0.01", placeholder = "", className = "" }: any) => (
-  <div className={`space-y-2 ${className}`}>
-    <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">{label}</label>
-    <div className="relative group">
-      {prefix && (
-        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors">
-          {prefix}
-        </div>
-      )}
-      <input
-        type={type}
-        step={step}
-        value={value}
-        onChange={(e) => {
-          const rawValue = e.target.value;
-          if (type === "number") {
-            onChange(validateNumber(parseFloat(rawValue)));
-          } else {
-            onChange(sanitizeString(rawValue));
-          }
-        }}
-        placeholder={placeholder}
-        className={`w-full bg-slate-50/50 border border-slate-100 rounded-2xl px-5 py-3.5 outline-none focus:ring-4 focus:ring-brand-primary/5 focus:border-brand-primary focus:bg-white transition-all text-slate-700 font-medium placeholder:text-slate-300 ${prefix ? 'pl-11' : ''} ${suffix ? 'pr-14' : ''}`}
-      />
-      {suffix && (
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-300 group-focus-within:text-brand-primary transition-colors">
-          {suffix}
-        </div>
-      )}
+const InputGroup = ({ label, value, onChange, type = "number", suffix = "", prefix = "", step = "0.01", placeholder = "", className = "" }: any) => {
+  const [localValue, setLocalValue] = useState(
+    type === "number" 
+      ? (value === 0 ? "0" : String(value).replace(".", ",")) 
+      : value
+  );
+
+  // Sincroniza o estado local apenas quando o valor numérico real muda externamente
+  useEffect(() => {
+    const numericLocal = parseFloat(String(localValue).replace(',', '.')) || 0;
+    if (numericLocal !== value) {
+      setLocalValue(type === "number" ? (value === 0 ? "0" : String(value).replace(".", ",")) : value);
+    }
+  }, [value, type]);
+
+  return (
+    <div className={`space-y-2 ${className}`}>
+      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">{label}</label>
+      <div className="relative group">
+        {prefix && (
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors">
+            {prefix}
+          </div>
+        )}
+        <input
+          type={type === "number" ? "text" : type}
+          inputMode={type === "number" ? "decimal" : undefined}
+          value={localValue}
+          onFocus={(e) => e.target.select()}
+          onChange={(e) => {
+            const rawValue = e.target.value;
+            
+            if (type === "number") {
+              // Permite apenas números, vírgula e ponto
+              const sanitized = rawValue.replace(/[^0-9,.]/g, '');
+              setLocalValue(sanitized);
+              
+              const normalizedValue = sanitized.replace(',', '.');
+              const parsed = parseFloat(normalizedValue);
+              if (!isNaN(parsed)) {
+                onChange(validateNumber(parsed));
+              } else if (sanitized === "") {
+                onChange(0);
+              }
+            } else {
+              setLocalValue(rawValue);
+              onChange(sanitizeString(rawValue));
+            }
+          }}
+          placeholder={placeholder}
+          className={`w-full bg-slate-50/50 border border-slate-100 rounded-2xl px-5 py-3.5 outline-none focus:ring-4 focus:ring-brand-primary/5 focus:border-brand-primary focus:bg-white transition-all text-slate-700 font-medium placeholder:text-slate-300 text-left ${prefix ? 'pl-11' : ''} ${suffix ? 'pr-14' : ''}`}
+        />
+        {suffix && (
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-300 group-focus-within:text-brand-primary transition-colors">
+            {suffix}
+          </div>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // --- Aplicação Principal ---
 
@@ -438,6 +467,12 @@ export default function App() {
             {/* Ingredients */}
             <Card title="Ingredientes" icon={Package} delay={0.1}>
               <div className="space-y-4">
+                <div className="p-4 bg-amber-50 rounded-2xl flex gap-4 text-amber-700 border border-amber-100 mb-4">
+                  <Info size={18} className="shrink-0 mt-0.5 text-amber-500" />
+                  <p className="text-[11px] leading-relaxed font-medium">
+                    <strong>Dica:</strong> Você pode adicionar "Gás/Energia" como um ingrediente se souber o custo por uso, ou usar a seção de <strong>Custos Fixos</strong> para uma estimativa geral.
+                  </p>
+                </div>
                 <AnimatePresence mode="popLayout">
                   {ingredients.map((ing, idx) => (
                     <motion.div 
@@ -494,12 +529,12 @@ export default function App() {
                           />
                           <div className="flex flex-col justify-end pb-1 px-1">
                             <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-2">Unidade</p>
-                            <div className="flex gap-2">
-                              {['g', 'ml', 'un', 'cm'].map(u => (
+                            <div className="flex flex-wrap gap-2">
+                              {['g', 'kg', 'ml', 'l', 'un', 'cm', 'm'].map(u => (
                                 <button
                                   key={u}
                                   onClick={() => updateIngredient(ing.id, 'unit', u)}
-                                  className={`flex-1 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${ing.unit === u ? 'bg-slate-900 text-white shadow-lg' : 'bg-white text-slate-400 border border-slate-100 hover:border-slate-200'}`}
+                                  className={`flex-1 min-w-[45px] py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${ing.unit === u ? 'bg-slate-900 text-white shadow-lg' : 'bg-white text-slate-400 border border-slate-100 hover:border-slate-200'}`}
                                 >
                                   {u}
                                 </button>
