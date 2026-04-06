@@ -196,12 +196,7 @@ export default function App() {
   useEffect(() => {
     const logToGoogleSheets = async () => {
       try {
-        // 1. Proteção contra sobrecarga: Só loga uma vez por hora por navegador
-        const lastLog = localStorage.getItem('app_log_ts');
-        const now = Date.now();
-        if (lastLog && now - parseInt(lastLog) < 3600000) return;
-
-        // 2. Pega o IP
+        // 1. Pega o IP
         const ipRes = await fetch('https://api.ipify.org?format=json');
         const { ip } = await ipRes.json();
 
@@ -223,11 +218,8 @@ export default function App() {
           token: 'LOG_SECURE_2024'
         };
 
-        // 4. Ofuscação do URL (Base64) para dificultar bots simples
-        const encodedUrl = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J3dWdPMkt1OVZiWGRMUVZReEhmVldaUFFIQUpvYzBNS3hmbVdOSFh4azB4UUJCZkx4TEtweTFXWk0yNi1GNXlWLS9leGVj';
-        const GOOGLE_SCRIPT_URL = atob(encodedUrl);
-        
-        console.log("DEBUG - Enviando para:", GOOGLE_SCRIPT_URL);
+        // 4. URL do Google Apps Script para logs
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzJIZeDgSOtYzB2VItiLYFapWgjMO_9aZ7UexzxG-ybwZRmICQ66qnY1S4ll2rTYGu0/exec';
         
         await fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
@@ -235,8 +227,6 @@ export default function App() {
           headers: { 'Content-Type': 'text/plain' },
           body: JSON.stringify(payload)
         });
-        
-        localStorage.setItem('app_log_ts', now.toString());
       } catch (error) {
         console.debug("Log silent fail");
       }
