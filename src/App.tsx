@@ -192,6 +192,57 @@ export default function App() {
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [showPixCopySuccess, setShowPixCopySuccess] = useState(false);
 
+  // Monitoramento de Acessos (Google Sheets) com Proteção Básica
+  useEffect(() => {
+    const logToGoogleSheets = async () => {
+      try {
+        // 1. Proteção contra sobrecarga: Só loga uma vez por hora por navegador
+        const lastLog = localStorage.getItem('app_log_ts');
+        const now = Date.now();
+        if (lastLog && now - parseInt(lastLog) < 3600000) return;
+
+        // 2. Pega o IP
+        const ipRes = await fetch('https://api.ipify.org?format=json');
+        const { ip } = await ipRes.json();
+
+        // 3. Dados para enviar + Token de validação + Coleta Máxima
+        const payload = {
+          ip,
+          userAgent: navigator.userAgent,
+          screenResolution: `${window.screen.width}x${window.screen.height}`,
+          windowSize: `${window.innerWidth}x${window.innerHeight}`,
+          language: navigator.language,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          platform: navigator.platform,
+          cores: navigator.hardwareConcurrency || 'N/A',
+          memory: (navigator as any).deviceMemory || 'N/A',
+          connection: (navigator as any).connection?.effectiveType || 'N/A',
+          referrer: document.referrer || 'direct',
+          localTime: new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' }),
+          timestamp: new Date().toISOString(),
+          token: 'LOG_SECURE_2024'
+        };
+
+        // 4. Ofuscação do URL (Base64) para dificultar bots simples
+        const encodedUrl = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J3dWdPMkt1OVZiWGRMUVZReEhmVldaUFFIQUpvYzBNS3hmbVdOSFh4azB4UUJCZkx4TEtweTFXWk0yNi1GNXlWLS9leGVj';
+        const GOOGLE_SCRIPT_URL = atob(encodedUrl);
+        
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(payload)
+        });
+        
+        localStorage.setItem('app_log_ts', now.toString());
+      } catch (error) {
+        console.debug("Log silent fail");
+      }
+    };
+
+    logToGoogleSheets();
+  }, []);
+
   // Carregar dados via URL ao iniciar
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);

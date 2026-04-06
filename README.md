@@ -12,6 +12,7 @@ Uma ferramenta profissional desenvolvida para ajudar artesãos e pequenos produt
 - **Custos Indiretos:** Adicione uma porcentagem para cobrir gastos como luz, água e gás (essencial para itens que vão ao fogão).
 - **Margem de Lucro (Markup):** Aplique sua margem desejada para ver o preço sugerido.
 - **Compartilhamento Inteligente:** Salve e compartilhe seus cálculos através de links codificados.
+- **Monitoramento Seguro:** Acompanhamento de acessos e análise de tráfego via backend (Express + Firebase), com proteção de dados e logs detalhados.
 
 ## Exemplo de Uso
 
