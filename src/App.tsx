@@ -1,6 +1,7 @@
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
+ * Trigger deployment after GitHub Actions permission fix
  */
 
 import React, { useState, useMemo, useRef, useEffect } from 'react';
