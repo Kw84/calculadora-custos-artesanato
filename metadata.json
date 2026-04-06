@@ -1,5 +1,5 @@
 {
   "name": "Precificação Artesanal Profissional",
-  "description": "Ferramenta avançada para cálculo de custos de produção, margem de lucro e precificação estratégica, com monitoramento seguro de acessos e análise de tráfego via backend.",
+  "description": "Ferramenta avançada para cálculo de custos de produção, margem de lucro e precificação estratégica, com monitoramento seguro de acessos e análise de tráfego via Google Sheets.",
   "requestFramePermissions": []
 }
